@@ -319,7 +319,7 @@ int button_display() {
     else if (button_datain == 0x200)
         alt_printf("Button Status: %s\n", "key1");
     else{
-    alt_printf("Button Status: %s\n","key0");
+    alt_printf("Button Status: key2\n");
     }
 
     return button_datain;

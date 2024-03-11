@@ -1,4 +1,7 @@
 # FPGA-Gold-Miner
+### Introduction
+This is the github repository for the ELEC50009 - Information
+
 Create connection between `test.py` script and DE10-Lite
 ```powershell
 # Open NIOS II command shell
