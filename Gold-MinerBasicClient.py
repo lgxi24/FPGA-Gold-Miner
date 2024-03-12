@@ -4,13 +4,16 @@ import gamebox
 import random
 import math
 import socket
+import json
+from decimal import Decimal
 
 print("we're in tcp client")
 HOST = '18.132.245.115'  
 PORT = 12000        
 
-# 0-preparation 
+# 0-preparation
 # general
+result = ""
 game_money = 0
 camera=gamebox.Camera(1000, 700)
 money=0
@@ -26,13 +29,13 @@ level = 1
 shop_list = []
 shop_price = []  
 money_goal=[1000,2200,3600,5400,7500,10000,12500,17000,21500,26000,30000,45000]
-scene = 0 # scene index: 0 = starting scene 1 = game rule scene 2 = game scene 4 = you die
+scene = 0 
 index = 0
 popped_up_word_counterdown_1 = 16
 popped_up_word_counterdown_2 = 16
 shop_selection = 0
 item_caught= gamebox.from_color(500,100,"black",1,1)
-picture_list=["picture/gold_small.png","picture/gold_middle.png","picture/gold_big.png","picture/rock_small.png","picture/rock_big.png","picture/dimaond.png","picture/mystery_bag.png","picture/background.png","picture/background2.png","picture/machine.png","picture/Starting screen.png","picture/intro.png"]
+picture_list=["picture/gold_small.png","picture/gold_middle.png","picture/gold_big.png","picture/rock_small.png","picture/rock_big.png","picture/dimaond.png","picture/mystery_bag.png","picture/background.png","picture/background1.png","picture/Blitzcrank_Render.png","picture/starting.png","picture/logo.png","picture/Thresh_Render.png"]
 
 text_list = ["Gold sands:Small gold worths more in the next level","Diamond polisher:Diamond worths 50% more in the next level","Lamp:More diamond would appear in the next level","The Gem of Time:You have 20 more seconds in the next level","The Gem of Luck:You have higher chance of getting good stuff from the random bags.","The Gem of Strength:Pulling minerals back takes less time in the next level","The lucky Rock:Rock worths 300% more in the next level","SOLD OUT!"]
 
@@ -98,54 +101,48 @@ def tick(keys):
         screen = gamebox.from_image(500, 350,picture_list[10])
         screen.scale_by(0.70)
         camera.draw(screen)
-        camera.draw(gamebox.from_text(500,500,"Press SPACE to continue","arial",30,"green"))
-
-        # animations
-        frame += 1
-        if frame == 7:
-            frame = 0
-
+        camera.draw(gamebox.from_color(500, 200, "white", 900, 60))
+        camera.draw(gamebox.from_text(500,200,"WELCOME to IMPERIAL MINER","arial",60,"dark blue"))
+        camera.draw(gamebox.from_text(500,500,"Press KEY1 to continue","arial",30,"green"))
         chainhead_1.image = sheet1[frame]
         if index == 0:
-            chainhead_1 = gamebox.from_image(240, 546, sheet1[frame])
+            chainhead_1 = gamebox.from_image(940, 546, sheet1[frame])
         else:
-            chainhead_1 = gamebox.from_image(570, 546, sheet1[frame])
+            chainhead_1 = gamebox.from_image(970, 546, sheet1[frame])
         chainhead_1.scale_by(0.5)
         camera.draw(chainhead_1)
 
-        if pygame.K_LEFT in keys and index == 1:
-            index= 0
-        if pygame.K_RIGHT in keys and index == 0:
-            index= 1
-        if pygame.K_SPACE in keys and index == 0:
-            scene= 2
+        
+        raw_data, button_status = read_input_file(file_path='output.txt')
+        if  button_status == "key1" or pygame.K_SPACE in keys:
+            scene = 2
             level_generation(level)
-        if pygame.K_SPACE in keys and index == 1:
-            keys = []
-            scene= 1
+        if button_status == "key2" or pygame.K_s in keys:
+            scene = 1
 
     if scene == 1:
-        picture = gamebox.from_image(500,350,picture_list[11])
-        picture.scale_by(0.5)
-        camera.draw(picture)
-        if pygame.K_SPACE in keys :
-            keys = []
+        get_rank(HOST,PORT)
+        raw_data, button_status = read_input_file(file_path='output.txt')
+        if  button_status == "key2" or pygame.K_w in keys:
             scene = 0
-
 
     if scene == 2:
         #background
         counter_up += 1
         picture = gamebox.from_image(500, 380, picture_list[7])
         picture2 = gamebox.from_image(500, 37.5, picture_list[8])
-        picture3 = gamebox.from_image(500, 37.5, picture_list[9])
-        picture3.scale_by(0.2)
+        picture3 = gamebox.from_image(460, 65.5, picture_list[9])
+        picture4 = gamebox.from_image(90, 155.5, picture_list[11])
+        
+
+        picture3.scale_by(0.1)
         picture2.scale_by(0.45)
         picture.scale_by(0.7)
+        picture4.scale_by(0.1)
         camera.draw(picture)
         camera.draw(picture2)
         camera.draw(picture3)
-
+        camera.draw(picture4)
         # camera.draw(character1)
 
         # animations
@@ -155,17 +152,15 @@ def tick(keys):
         chainhead_1.image = sheet1[frame]
         if frame == 7:
             frame = 0
-        chainhead_2.image = sheet1[frame]
-
 
         if chain_thrown_out_1 == False:
-            character1 = gamebox.from_image(455, 50, sheet2[int(frame1)])
+            character1 = gamebox.from_image(755, 80, sheet2[int(frame1)])
             frame1 += 0.5
             if frame1 == 7:
                 frame1 = 0
             character1.image = sheet2[int(frame1)]
         else:
-            character1 = gamebox.from_image(455, 50, sheet3[int(frame1)])
+            character1 = gamebox.from_image(755, 80, sheet3[int(frame1)])
             frame1 += 0.5
             if frame1 == 8:
                 frame1 = 0
@@ -195,7 +190,6 @@ def tick(keys):
             # chain head displays
             chainhead_1.x = 500 + math.sin(radins_1 / 57.29) * 75
             chainhead_1.y = 75 + math.cos(radins_1 / 57.29) * 75
-
             camera.draw(chainhead_1)
 
             # chains display
@@ -204,9 +198,6 @@ def tick(keys):
                 item = gamebox.from_color(500 + math.sin(radins_1 / 57.29) * 2.5 * i,
                                           75 + math.cos(radins_1 / 57.29) * 2.5 * i, "black", 5, 5)
                 camera.draw(item)
-        
-
-
         
 
         # 3-chain_thrown_out
@@ -351,14 +342,15 @@ def tick(keys):
 
         if chain_thrown_out_catchsomething_1 == True:
             item = gamebox.from_image(500 + math.sin(radins_1 / 57.29) * 2.5 * (chain_distance+10),
-                                      75 + math.cos(radins_1 / 57.29) * 2.5 * (chain_distance+10), picture_list[pict_index])
+                                      95 + math.cos(radins_1 / 57.29) * 2.5 * (chain_distance+10), picture_list[pict_index])
             camera.draw(item)
 
         # 6-score/time/environments display
         counter -= 1
-        camera.draw(gamebox.from_text(135, 25, "Your money:" + str(money), "arial", 24, "yellow"))
-        camera.draw(gamebox.from_text(145, 55, "Time remaining:" + str(int(counter/30)), "arial", 22, "black"))
-        camera.draw(gamebox.from_color(500, 75, "black", 40000, 10))
+        camera.draw(gamebox.from_text(895, 135, "Your money:" + str(money), "arial", 24, "yellow"))
+        camera.draw(gamebox.from_text(895, 165, "Time remaining:" + str(int(counter/30)), "arial", 22, "yellow"))
+        camera.draw(gamebox.from_color(500, 118, "black", 40000, 3))
+
         popped_up_word_counterdown_1 += 1
         if popped_up_word_counterdown_1 <= 15:
             if value_caught > 0:
@@ -388,20 +380,18 @@ def tick(keys):
                 chain_thrown_out_1 = False
                 character1.scale_by(0.833)
                 chain_thrown_out_catchsomething_2 = False
-                frame2 = 0  # prevent "out of range" error
+                frame2 = 0 
                 weight_item_caught = speed + 5
                 value_caught = 0
                 game_money = money
-
-                
 
 
     if scene == 4:
         result = send_score(HOST, PORT, game_money)
         camera.draw(gamebox.from_text(500, 350, result, "arial", 30, "yellow"))
-        camera.draw(gamebox.from_text(450, 250, "Your score: ","arial",30, "red"))
-        camera.draw(gamebox.from_text(550, 250, str(game_money), "arial",30, "green"))
-        
+        camera.draw(gamebox.from_text(400, 300, "Your score: ", "arial", 30, "red"))
+        camera.draw(gamebox.from_text(600, 300, str(game_money), "arial",30, "green"))
+
 
     camera.display()
 
@@ -418,9 +408,9 @@ def level_generation(level):
     gold_random_big = []
     # item evaluation
     if item_time == True:
-        counter = 1200
+        counter = 2400
     else:
-        counter = 900
+        counter = 1800
 
     if item_lamp == True:
         no_diamond = 3
@@ -462,12 +452,12 @@ def level_generation(level):
 
     if level >= 8:
         for c in range(0, random.randint(2,3)):
-            item = gamebox.from_image(random.randint(50, 950), random.randint(200, 690), picture_list[0])
+            item = gamebox.from_image(random.randint(50, 950), random.randint(230, 670), picture_list[0])
             gold_small.append(item)
         for c in range(0, 2):
             touched = True
             while touched:
-                item = gamebox.from_image(random.randint(50, 950), random.randint(200, 690), picture_list[3])
+                item = gamebox.from_image(random.randint(50, 950), random.randint(230, 670), picture_list[3])
                 touched = False
                 for evaluated_item in gold_small:
                     if item.touches(evaluated_item) == True:
@@ -479,12 +469,12 @@ def level_generation(level):
 
     else:
         for c in range(0, random.randint(5 + level // 2, 12 + level // 2)):
-            item = gamebox.from_image(random.randint(50, 950), random.randint(200, 690), picture_list[0])
+            item = gamebox.from_image(random.randint(50, 950), random.randint(230, 670), picture_list[0])
             gold_small.append(item)
         for c in range(0, random.randint(5, 7)):
             touched = True
             while touched:
-                item = gamebox.from_image(random.randint(50, 950), random.randint(200, 690), picture_list[3])
+                item = gamebox.from_image(random.randint(50, 950), random.randint(230, 670), picture_list[3])
                 touched = False
                 for evaluated_item in gold_small:
                     if item.touches(evaluated_item) == True:
@@ -496,10 +486,10 @@ def level_generation(level):
 
 
 
-    for c in range(0, random.randint(5+level//2, 8+level//2)):
+    for c in range(0, random.randint(8+level//2, 10+level//2)):
         touched = True
         while touched:
-            item = gamebox.from_image(random.randint(50, 950), random.randint(200, 690), picture_list[1])
+            item = gamebox.from_image(random.randint(50, 950), random.randint(230, 670), picture_list[1])
             touched = False
             for evaluated_item in gold_small:
                 if item.touches(evaluated_item) == True:
@@ -512,10 +502,10 @@ def level_generation(level):
                     touched = True
         gold_middle.append(item)
 
-    for c in range(0, random.randint(1+level//4+base, 3+level//4+base)):
+    for c in range(0, random.randint(1+level//4+base, 2+level//4+base)):
         touched = True
         while touched:
-            item = gamebox.from_image(random.randint(50, 950), random.randint(275, 690), picture_list[4])
+            item = gamebox.from_image(random.randint(50, 950), random.randint(270, 700), picture_list[4])
             touched = False
             for evaluated_item in gold_small:
                 if item.touches(evaluated_item) == True:
@@ -534,7 +524,7 @@ def level_generation(level):
     for c in range(0, random.randint(base, no_big)):
         touched = True
         while touched:
-            item = gamebox.from_image(random.randint(50, 950), random.randint(200, 690), picture_list[2])
+            item = gamebox.from_image(random.randint(50, 950), random.randint(230, 670), picture_list[2])
             touched = False
             for evaluated_item in gold_small:
                 if item.touches(evaluated_item) == True:
@@ -553,10 +543,10 @@ def level_generation(level):
                     touched = True
         gold_large.append(item)
 
-    for c in range(0, random.randint(base, no_diamond)):
+    for c in range(0, random.randint(2, 3)):
         touched = True
         while touched:
-            item = gamebox.from_image(random.randint(50, 950), random.randint(200, 690), picture_list[5])
+            item = gamebox.from_image(random.randint(50, 950), random.randint(230, 670), picture_list[5])
             touched = False
             for evaluated_item in gold_small:
                 if item.touches(evaluated_item) == True:
@@ -578,10 +568,10 @@ def level_generation(level):
                     touched = True
         gold_dimaond.append(item)
 
-    for c in range(0, random.randint(base, no_random)):
+    for c in range(0, random.randint(1, 2)):
         touched = True
         while touched:
-            item = gamebox.from_image(random.randint(50, 950), random.randint(200, 690), picture_list[6])
+            item = gamebox.from_image(random.randint(50, 950), random.randint(250, 700), picture_list[6])
             touched = False
             for evaluated_item in gold_small:
                 if item.touches(evaluated_item) == True:
@@ -606,7 +596,26 @@ def level_generation(level):
                     touched = True
         gold_random_big.append(item)
 
-game_over = False 
+
+def get_rank(host, port):
+    with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as s:
+        s.connect((host, port))
+        rank_message = "get rank".encode()
+        s.sendall(rank_message)
+        response = s.recv(1024).decode()
+        rank_data = json.loads(response)
+        y_position = 300
+        for rank in rank_data:
+            player_id = rank['player_id']
+            score = rank['score']
+
+            rank_text = f"{player_id}: {score}"
+
+            camera.draw(gamebox.from_text(500, y_position, rank_text, "arial", 30, "yellow"))
+        
+            y_position += 40
+
+game_over = False  # Flag to track if the game result has been received
 final_result ="Waiting for other player... "
 def send_score(host, port, score):
     global game_over, final_result
@@ -622,14 +631,11 @@ def send_score(host, port, score):
                 if game_over:
                     return final_result
                 if response in ["You win!", "You lose."]:
-                    final_result = response 
+                    final_result = response  
                     game_over = True  
-                    return final_result
-                else:
                     return final_result
 
 ticks_per_second = 30
-# keep this line the last one in your program
 gamebox.timer_loop(ticks_per_second, tick)
 
 
