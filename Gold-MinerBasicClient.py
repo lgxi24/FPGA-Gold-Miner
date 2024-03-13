@@ -129,7 +129,7 @@ def tick(keys):
     if scene == 1:
         get_rank(HOST,PORT)
         raw_data, button_status = read_input_file(file_path='output.txt')
-        if  button_status == "key0" or pygame.K_w in keys:
+        if  button_status == "key1" or pygame.K_w in keys:
             scene = 0
 
     if scene == 2:
