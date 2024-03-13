@@ -57,7 +57,7 @@ while True:
                     
                         # Remove the processed part from the buffer, including the second newline
                 if i==200:
-                    print("write to led")
+                    # print("write to led")
                     with open('input.txt', 'r') as file:
                         content = file.read()  # Read the current content
                     if content:
