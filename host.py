@@ -50,7 +50,7 @@ while True:
                 if i%49==0:
                     # print("read: ", content_between_newlines)
                     if content_between_newlines[0] == 'r':
-                        # print(content_between_newlines)
+                        print(content_between_newlines)
                         with open('output.txt', 'w') as file:
                             file.write(content_between_newlines)       
                     buffer = buffer[second_newline_pos+1:]
