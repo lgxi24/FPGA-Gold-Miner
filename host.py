@@ -27,16 +27,13 @@ while True:
     # user_input = input("Score: ")
 
     # read score from input.txt   
-    with open('input.txt', 'r') as file:
-        content = file.read()  # Read the current content
-
-    if content != last_content:  # If the content has changed
-        score = int(content.strip())  # Assuming content is a number
-        ju.write(f"{score}\n".encode('utf-8'))  # Write the content into ju.write
-
-    last_content = content  # Update the last read content
-
+    
     if reading:  # If there's data read from the UART 
+        # with open('input.txt', 'r') as file:
+        #     content = file.read()  # Read the current content
+        # score = int(content.strip())  # Assuming content is a number
+        # ju.write(f"{score}\n".encode('utf-8'))  # Write the content into ju.write
+        # ju.write(f"{1}\n".encode('utf-8'))
 
         buffer += reading.decode('utf-8')  # Append the data to the buffer, decode if necessary
         
@@ -48,16 +45,26 @@ while True:
             
             # Extract the content between the first two newline characters
             content_between_newlines = buffer[first_newline_pos+1:second_newline_pos]
-            for i in range (50):
-                if i==49:
+            for i in range (201):
+                
+                if i%49==0:
                     # print("read: ", content_between_newlines)
                     if content_between_newlines[0] == 'r':
-                        print(content_between_newlines)
+                        # print(content_between_newlines)
                         with open('output.txt', 'w') as file:
-                            file.write(content_between_newlines)
+                            file.write(content_between_newlines)       
                     buffer = buffer[second_newline_pos+1:]
+                    
                         # Remove the processed part from the buffer, including the second newline
+                if i==200:
+                    print("write to led")
+                    with open('input.txt', 'r') as file:
+                        content = file.read()  # Read the current content
+                    if content:
+                        score = int(content.strip())  # Assuming content is a number
+                        ju.write(f"{score}\n".encode('utf-8'))  # Write the content into ju.write    
                     i=0
+                # print(i)
                 buffer = buffer[second_newline_pos+1:]
                 i=i+1
             

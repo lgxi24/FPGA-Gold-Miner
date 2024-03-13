@@ -418,9 +418,9 @@ def level_generation(level):
     gold_random_big = []
     # item evaluation
     if item_time == True:
-        counter = 240
+        counter = 2400
     else:
-        counter = 180
+        counter = 1800
 
     if item_lamp == True:
         no_diamond = 3
