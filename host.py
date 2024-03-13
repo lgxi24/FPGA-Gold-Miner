@@ -10,9 +10,10 @@ try:
 except Exception as e:
     print(e)
     sys.exit(0)
-    
-    
-# time.sleep(1)
+
+# read from 
+with open('input.txt', 'r') as file:
+    last_content = file.read()  # Initialize the last read content
 
 buffer = ""  # Initialize an empty buffer to accumulate data
 def user_write(user_input):
@@ -29,6 +30,9 @@ while True:
         # if user_input:
         #     user_write(user_input)
         # print('a')    
+
+
+
         buffer += reading.decode('utf-8')  # Append the data to the buffer, decode if necessary
         
         # Check if there are at least two newline characters in the buffer
