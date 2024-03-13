@@ -94,13 +94,13 @@ def tick(keys):
     global item_gold_modifer, item_polisher, item_lamp, item_time, item_luck, item_rocks
     camera.clear('black')
     
-    with open('output1.txt', 'r') as file:
+    with open('input.txt', 'r') as file:
         lines = file.readlines()
     if lines:
         lines[0] = str(money) + '\n'
     else:
         lines.append(str(money) + '\n')
-    with open('output1.txt', 'w') as file:
+    with open('input.txt', 'w') as file:
         file.writelines(lines)
 
     if scene == 0:

@@ -16,22 +16,27 @@ with open('input.txt', 'r') as file:
     last_content = file.read()  # Initialize the last read content
 
 buffer = ""  # Initialize an empty buffer to accumulate data
-def user_write(user_input):
-    command = "nios2-terminal <<< {}".format(user_input)
-    byte_object = command.encode('utf-8')
-    ju.write(byte_object)
+# def user_write(user_input):
+#     command = "nios2-terminal <<< {}".format(user_input)
+#     byte_object = command.encode('utf-8')
+#     ju.write(byte_object)
     
 while True:
     # time.sleep(0.1)
     reading = ju.read()
     # user_input = input("Score: ")
-    
-    if reading:  # If there's data read from the UART
-        # if user_input:
-        #     user_write(user_input)
-        # print('a')    
 
+    # read score from input.txt   
+    with open('input.txt', 'r') as file:
+        content = file.read()  # Read the current content
 
+    if content != last_content:  # If the content has changed
+        score = int(content.strip())  # Assuming content is a number
+        ju.write(f"{score}\n".encode('utf-8'))  # Write the content into ju.write
+
+    last_content = content  # Update the last read content
+
+    if reading:  # If there's data read from the UART 
 
         buffer += reading.decode('utf-8')  # Append the data to the buffer, decode if necessary
         
