@@ -91,7 +91,7 @@ def tick(keys):
     global chain_thrown_out_catchsomething_1, chain_thrown_out_catchsomething_2 , item_caught , weight_item_caught , speed , background
     global value_caught , pict_index , counter , level, surface, counter_up, frame, frame1, frame2, scene, index
     global popped_up_word_counterdown_1,popped_up_word_counterdown_2, shop_selection, shop_list, shop_price
-    global item_gold_modifer, item_polisher, item_lamp, item_time, item_luck, item_rocks
+    global item_gold_modifer, item_polisher, item_lamp, item_time, item_luck, item_rocks, counter1
     camera.clear('black')
     
     with open('input.txt', 'r') as file:
@@ -117,6 +117,7 @@ def tick(keys):
             chainhead_1 = gamebox.from_image(970, 546, sheet1[frame])
         chainhead_1.scale_by(0.5)
         camera.draw(chainhead_1)
+        counter1 = 1
 
         
         raw_data, button_status = read_input_file(file_path='output.txt')
@@ -128,9 +129,13 @@ def tick(keys):
 
     if scene == 1:
         get_rank(HOST,PORT)
+        counter1 = counter1 + 1
+        if counter1 == 50:
+            scene = 0 
         raw_data, button_status = read_input_file(file_path='output.txt')
         if  button_status == "key0" or pygame.K_w in keys:
             scene = 0
+        
 
     if scene == 2:
         #background
@@ -176,7 +181,6 @@ def tick(keys):
 
 
         # 2-when chain available
-        # degree regular changes
         if chain_thrown_out_1 == False:
             if popped_up_word_counterdown_1 >= 16:
                 raw_data, button_status = read_input_file(file_path='output.txt')
@@ -206,8 +210,6 @@ def tick(keys):
                 camera.draw(item)
         
 
-        # 3-chain_thrown_out
-        # set up throwing chain
         raw_data, button_status = read_input_file(file_path='output.txt')
         if  button_status == "key1" and chain_thrown_out_1== False and popped_up_word_counterdown_1 >= 16:
             chain_thrown_out_1 = True
