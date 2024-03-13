@@ -34,7 +34,7 @@ popped_up_word_counterdown_1 = 16
 popped_up_word_counterdown_2 = 16
 shop_selection = 0
 item_caught= gamebox.from_color(500,100,"black",1,1)
-picture_list=["picture/gold_small.png","picture/gold_middle.png","picture/gold_big.png","picture/rock_small.png","picture/rock_big.png","picture/dimaond.png","picture/mystery_bag.png","picture/background.png","picture/background1.png","picture/Blitzcrank_Render.png","picture/starting.png","picture/logo.png","picture/Thresh_Render.png"]
+picture_list=["picture/gold_small.png","picture/gold_middle.png","picture/gold_big.png","picture/rock_small.png","picture/rock_big.png","picture/dimaond.png","picture/mystery_bag.png","picture/background.png","picture/background1.png","picture/Blitzcrank_Render.png","picture/starting.png","picture/logo.png","picture/Thresh_Render.png","picture/Logo-2.png"]
 
 text_list = ["Gold sands:Small gold worths more in the next level","Diamond polisher:Diamond worths 50% more in the next level","Lamp:More diamond would appear in the next level","The Gem of Time:You have 20 more seconds in the next level","The Gem of Luck:You have higher chance of getting good stuff from the random bags.","The Gem of Strength:Pulling minerals back takes less time in the next level","The lucky Rock:Rock worths 300% more in the next level","SOLD OUT!"]
 
@@ -107,9 +107,13 @@ def tick(keys):
         screen = gamebox.from_image(500, 350,picture_list[10])
         screen.scale_by(0.70)
         camera.draw(screen)
-        camera.draw(gamebox.from_color(500, 200, "white", 900, 60))
-        camera.draw(gamebox.from_text(500,200,"WELCOME to IMPERIAL MINER","arial",60,"dark blue"))
-        camera.draw(gamebox.from_text(500,500,"Press KEY1 to continue","arial",30,"green"))
+        screen = gamebox.from_image(500, 350,picture_list[13])
+        screen.scale_by(0.70)
+        camera.draw(screen)
+        camera.draw(gamebox.from_color(500, 40, "white", 2000, 60))
+        camera.draw(gamebox.from_text(500,40,"Welcome to FPGA Gold Miner","arial",60,"dark blue"))
+        camera.draw(gamebox.from_text(170,670,"Press KEY1 to Start","arial",30,"yellow"))
+        camera.draw(gamebox.from_text(830,670,"Press KEY0 to Rank","arial",30,"yellow"))
         chainhead_1.image = sheet1[frame]
         if index == 0:
             chainhead_1 = gamebox.from_image(940, 546, sheet1[frame])
@@ -177,7 +181,7 @@ def tick(keys):
                 frame1 = 0
             character1.image = sheet3[int(frame1)]
 
-        camera.draw(character1)
+        # camera.draw(character1)
 
 
         # 2-when chain available
