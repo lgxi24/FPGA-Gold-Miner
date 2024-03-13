@@ -94,8 +94,15 @@ def tick(keys):
     global item_gold_modifer, item_polisher, item_lamp, item_time, item_luck, item_rocks
     camera.clear('black')
     
+    with open('output1.txt', 'r') as file:
+        lines = file.readlines()
+    if lines:
+        lines[0] = str(money) + '\n'
+    else:
+        lines.append(str(money) + '\n')
+    with open('output1.txt', 'w') as file:
+        file.writelines(lines)
 
-    # differetiate on scenes
     if scene == 0:
         screen = gamebox.from_image(500, 350,picture_list[10])
         screen.scale_by(0.70)
@@ -411,9 +418,9 @@ def level_generation(level):
     gold_random_big = []
     # item evaluation
     if item_time == True:
-        counter = 2400
+        counter = 240
     else:
-        counter = 1800
+        counter = 180
 
     if item_lamp == True:
         no_diamond = 3
