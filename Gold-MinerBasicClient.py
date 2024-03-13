@@ -13,7 +13,6 @@ PORT = 12000
 
 # 0-preparation
 # general
-result = ""
 game_money = 0
 camera=gamebox.Camera(1000, 700)
 money=0
@@ -78,7 +77,7 @@ def read_input_file(file_path='output.txt'):
     with open(file_path, 'r') as file:
         line = file.readline().strip()
         if not line:
-            return '0', 'key0'
+            return '0', 'key N/A'
         # Assuming the line format is 'raw data: ffffffffd3 Button Status: key1'
         if 'Button Status: ' in line:
             raw_data_part, button_status_part = line.split('Button Status: ')
@@ -117,13 +116,13 @@ def tick(keys):
         if  button_status == "key1" or pygame.K_SPACE in keys:
             scene = 2
             level_generation(level)
-        if button_status == "key2" or pygame.K_s in keys:
+        if button_status == "key0" or pygame.K_s in keys:
             scene = 1
 
     if scene == 1:
         get_rank(HOST,PORT)
         raw_data, button_status = read_input_file(file_path='output.txt')
-        if  button_status == "key2" or pygame.K_w in keys:
+        if  button_status == "key0" or pygame.K_w in keys:
             scene = 0
 
     if scene == 2:
@@ -206,7 +205,7 @@ def tick(keys):
         if  button_status == "key1" and chain_thrown_out_1== False and popped_up_word_counterdown_1 >= 16:
             chain_thrown_out_1 = True
             chain_thrown_out_away_1 = True
-            chain_thrown_out_catchsomething_1 = False
+            chain_thrown_out_catchsomething_1 = False   
             chain_distance = 30
             character1.scale_by(1.2)
 
@@ -391,6 +390,10 @@ def tick(keys):
         camera.draw(gamebox.from_text(500, 350, result, "arial", 30, "yellow"))
         camera.draw(gamebox.from_text(400, 300, "Your score: ", "arial", 30, "red"))
         camera.draw(gamebox.from_text(600, 300, str(game_money), "arial",30, "green"))
+        camera.draw(gamebox.from_text(500, 400, "Press key 1 go back to homepage ", "arial", 30, "green"))
+        raw_data, button_status = read_input_file(file_path='output.txt')
+        if  button_status == "key0" or pygame.K_w in keys:
+            scene = 0
 
 
     camera.display()
@@ -600,23 +603,31 @@ def level_generation(level):
 def get_rank(host, port):
     with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as s:
         s.connect((host, port))
-        rank_message = "get rank".encode()
+        rank_message = str("get rank").encode()
         s.sendall(rank_message)
         response = s.recv(1024).decode()
         rank_data = json.loads(response)
-        y_position = 300
+        y_position = 200
         for rank in rank_data:
             player_id = rank['player_id']
             score = rank['score']
+            camera.draw(gamebox.from_text(500, 100, "Rank", "arial", 30, "yellow"))
+            camera.draw(gamebox.from_text(400, 150, "Player_ip", "arial", 30, "yellow"))
+            camera.draw(gamebox.from_text(600, 150, "Score", "arial", 30, "green"))
 
-            rank_text = f"{player_id}: {score}"
+            rank_text = f"{player_id}"
+            
+            camera.draw(gamebox.from_text(400, y_position, rank_text, "arial", 30, "yellow"))
 
-            camera.draw(gamebox.from_text(500, y_position, rank_text, "arial", 30, "yellow"))
-        
+            rank_text = f"{score}"
+
+            camera.draw(gamebox.from_text(600, y_position, rank_text, "arial", 30, "green"))
+
             y_position += 40
 
 game_over = False  # Flag to track if the game result has been received
 final_result ="Waiting for other player... "
+
 def send_score(host, port, score):
     global game_over, final_result
 
@@ -633,6 +644,8 @@ def send_score(host, port, score):
                 if response in ["You win!", "You lose."]:
                     final_result = response  
                     game_over = True  
+                    return final_result
+                else:
                     return final_result
 
 ticks_per_second = 30
