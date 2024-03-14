@@ -37,7 +37,7 @@ FPGA-Gold_Miner/
 └── README.md
 ```
 
-### Manual
+### Tutorial
 
 1. Initialise FPGA
 ```bash
