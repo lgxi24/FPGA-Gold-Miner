@@ -1,2 +1,3 @@
-src/output.txt
-src/input.txt
+output.txt
+input.txt
+src/__pycache__/
