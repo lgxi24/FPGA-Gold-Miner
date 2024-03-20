@@ -6,13 +6,12 @@ This is the github repository for the ELEC50009 - Information module coursework.
 ```bash
 FPGA-Gold_Miner/
 │
-├── src/ # game release
-|   ├── coursework_v1.elf # software project
-|   ├── DE10_LITE_Golden_Top.sof # NIOS hardware bit-stream file
-|   ├── gamebox.py # gamebox library
-|   ├── Gold-MinerBasicClient.py # Game file and Client script
-|   ├── host.py # UART communication with FPGA
-|   └── tcpserver.py # Server script
+├──coursework_v1.elf # software project
+├──DE10_LITE_Golden_Top.sof # NIOS hardware bit-stream file
+├──gamebox.py # gamebox library
+├──Gold-MinerBasicClient.py # Game file and Client script
+├──host.py # UART communication with FPGA
+├──tcpserver.py # Server script
 │
 ├── Golden_Top/ # FPGA project
 │   ├── ... 
