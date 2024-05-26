@@ -71,4 +71,10 @@ run Gold-MinerBasicClient.py
 
 ![Game Interface](./images/game_interface.png)
 
+### Demo
+
+https://github.com/lgxi24/FPGA-Gold-Miner/assets/115477676/4af19abd-b736-4b01-b00d-a21ac7633fd7
+
+
+
 
